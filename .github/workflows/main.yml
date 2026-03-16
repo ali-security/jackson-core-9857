@@ -1,14 +1,14 @@
 name: Build and Deploy Snapshot
 on:
   push:
-    branches: ['2.*']
+    branches: [2.*]
     paths-ignore:
-    - "README.md"
-    - "release-notes/*"
+    - README.md
+    - release-notes/*
   pull_request:
     paths-ignore:
-    - "README.md"
-    - "release-notes/*"
+    - README.md
+    - release-notes/*
 permissions:
   contents: read
 
@@ -20,24 +20,24 @@ jobs:
       matrix:
         java_version: ['8', '17', '21', '23']
         # We will actually need "os" as Matrix to have Windows build
-        os: ['ubuntu-24.04']
+        os: [ubuntu-24.04]
         include:
-          - java_version: '8'
-            os: 'ubuntu-24.04'
-            release_build: 'R'
-          - java_version: '8'
-            os: 'windows-latest'
-            is_windows: 'W'
+        - java_version: '8'
+          os: ubuntu-24.04
+          release_build: R
+        - java_version: '8'
+          os: windows-2025
+          is_windows: W
     env:
-      JAVA_OPTS: "-XX:+TieredCompilation -XX:TieredStopAtLevel=1"
+      JAVA_OPTS: -XX:+TieredCompilation -XX:TieredStopAtLevel=1
     steps:
     - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
     - name: Set up JDK
       uses: actions/setup-java@3a4f6e1af504cf6a31855fa899c6aa5355ba6c12 # v4.7.0
       with:
-        distribution: 'temurin'
+        distribution: temurin
         java-version: ${{ matrix.java_version }}
-        cache: 'maven'
+        cache: maven
         server-id: central-snapshots
         server-username: CI_DEPLOY_USERNAME
         server-password: CI_DEPLOY_PASSWORD
@@ -89,4 +89,3 @@ jobs:
     uses: ./.github/workflows/trigger_dep_builds_v3.yml
     secrets:
       token: ${{ secrets.REPO_DISPATCH }}
-      
